@@ -65,6 +65,7 @@ from tools.domains.groups import create_center as create_center_domain
 from tools.domains.groups import create_group as create_group_domain
 from tools.domains.groups import get_center as get_center_domain
 from tools.domains.groups import get_group as get_group_domain
+from tools.domains.groups import get_group_accounts as get_group_accounts_domain
 from tools.domains.loans import (
     apply_late_fee,
     approve_and_disburse_loan,
@@ -429,6 +430,29 @@ def create_lending_group(name: str, officeId: int, externalId: str = None) -> di
 def get_group(groupId: int) -> dict:
     """Show details and members of a lending group"""
     return get_group_domain.func(groupId)
+
+@mcp.tool()
+@safe_tool("get_group_accounts")
+def get_group_accounts(groupId: int) -> dict:
+    """Get group accounts.
+
+    Retrieve loan and savings accounts associated with a group.
+
+    Parameters
+    ----------
+    groupId : int
+        The positive integer ID of the group whose accounts to retrieve.
+
+    Returns
+    -------
+    dict
+        A dictionary containing the group's accounts:
+        - loanAccounts: list of loan accounts associated with the group
+        - savingsAccounts: list of savings accounts associated with the group
+        - memberLoanAccounts: list of loan accounts associated with group members
+        - memberSavingsAccounts: list of savings accounts associated with group members
+    """
+    return get_group_accounts_domain.func(groupId)
 
 @mcp.tool()
 @safe_tool("list_all_groups", list_key="groups")

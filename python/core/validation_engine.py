@@ -81,6 +81,9 @@ def validate_input(tool_name: str, params: Dict[str, Any]) -> None:
     if tool_name == "get_loan":
         _require_positive_int(params, "loanId")
 
+    if tool_name == "get_group_accounts":
+        _require_positive_int(params, "groupId")
+
     if tool_name == "make_repayment":
         _require_positive_int(params, "loanId")
         _require_positive_number(params, "amount")

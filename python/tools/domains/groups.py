@@ -31,6 +31,12 @@ def get_group(group_id: int):
     return fineract_client.execute_get(f"groups/{group_id}?associations=all")
 
 @tool
+def get_group_accounts(group_id: int):
+    """Answers: 'Show me all loan and savings accounts for group #12'"""
+    logger.info(f"[Tool] Fetching accounts for Group #{group_id}...")
+    return fineract_client.execute_get(f"groups/{group_id}/accounts")
+
+@tool
 def create_group(name: str, office_id: int, external_id: str = None):
     """Answers: 'Create a new lending group named "Alpha Group" in office 1'"""
     logger.info(f"[Tool] Creating Group '{name}'...")

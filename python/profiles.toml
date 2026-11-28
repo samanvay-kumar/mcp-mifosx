@@ -24,6 +24,7 @@ tools = [
     "get_client",
     "get_client_accts",
     "get_group",
+    "get_group_accounts",
     "list_all_groups",
     "list_all_centers",
     "get_center",
