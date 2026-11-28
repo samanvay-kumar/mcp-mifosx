@@ -433,7 +433,7 @@ def get_group(groupId: int) -> dict:
 
 @mcp.tool()
 @safe_tool("get_group_accounts")
-def get_group_accounts(groupId: int) -> dict:
+def get_group_accounts(groupId: StrictInt) -> dict:
     """Get group accounts.
 
     Retrieve loan and savings accounts associated with a group.

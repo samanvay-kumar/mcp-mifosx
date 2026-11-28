@@ -5,9 +5,11 @@
 
 """Unit tests for get_group_accounts MCP tool and domain function."""
 
+import asyncio
 from unittest.mock import patch
 
 import pytest
+from fastmcp import Client
 from fastmcp.exceptions import ToolError
 
 import mcp_server
@@ -150,3 +152,27 @@ def test_get_group_accounts_unexpected_exception() -> None:
     with patch.object(fineract_client, "execute_get", side_effect=RuntimeError("connection reset")):
         with pytest.raises(ToolError, match="Internal tool execution error"):
             fn(groupId=12)
+
+
+def test_mcp_dispatch_rejects_invalid_group_ids() -> None:
+    """Tool call through FastMCP Client rejects invalid groupId types and never calls execute_get."""
+
+    async def run() -> None:
+        async with Client(mcp_server.mcp) as client:
+            for bad_val in ["12", 3.5, True, None]:
+                with patch.object(fineract_client, "execute_get") as mock_get:
+                    with pytest.raises(ToolError):
+                        await client.call_tool("get_group_accounts", {"groupId": bad_val})
+                    mock_get.assert_not_called()
+
+    asyncio.run(run())
+
+
+@pytest.mark.parametrize("group_id", [0, -1, True, False])
+def test_domain_function_rejects_invalid_group_id(group_id: object) -> None:
+    """Domain function returns an error dict and does not call execute_get for non-positive or non-int IDs."""
+    with patch.object(fineract_client, "execute_get") as mock_get:
+        result = get_group_accounts_domain.func(group_id)
+        mock_get.assert_not_called()
+        assert isinstance(result, dict) and "error" in result
+        assert f"Invalid group_id: {group_id}. Must be a positive integer." in result["error"]

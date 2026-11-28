@@ -33,6 +33,8 @@ def get_group(group_id: int):
 @tool
 def get_group_accounts(group_id: int):
     """Answers: 'Show me all loan and savings accounts for group #12'"""
+    if type(group_id) is not int or group_id <= 0:
+        return {"error": f"Invalid group_id: {group_id}. Must be a positive integer."}
     logger.info(f"[Tool] Fetching accounts for Group #{group_id}...")
     return fineract_client.execute_get(f"groups/{group_id}/accounts")
 
